@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <script src="js/echarts.min.js"></script>
+    <script type="text/javascript" src="http://www.w3school.com.cn/jquery/jquery.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<div id="main" style="width: 600px;height:400px;"></div>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    var option = {
+        backgroundColor: '#2c343c',
+
+        title: {
+            text: 'Customized Pie',
+            left: 'center',
+            top: 20,
+            textStyle: {
+                color: '#ccc'
+            }
+        },
+
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+
+        visualMap: {
+            show: false,
+            min: 80,
+            max: 600,
+            inRange: {
+                colorLightness: [0, 1]
+            }
+        },
+        series : [
+            {
+                name:'访问来源',
+                type:'pie',
+                radius : '55%',
+                center: ['50%', '50%'],
+                data:(function () {//<![CDATA[
+                    var datas = [];
+                    $.ajax({
+                        type: "POST",
+                        url: "/first",
+                        dataType: 'json',
+                        async: false,
+                        success: function (result) {
+                            for (var i = 0; i < result.length; i++) {//{value: 335, name: '直接访问'}
+                                datas.push({"value": result[i].value, "name": result[i].name})
+
+                            }
+                        }
+                    });
+                    return datas;
+                    //]]>
+                })().sort(function (a, b) { return a.value - b.value; }),
+                roseType: 'radius',
+                label: {
+                    normal: {
+                        textStyle: {
+                            color: 'rgba(255, 255, 255, 0.3)'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        lineStyle: {
+                            color: 'rgba(255, 255, 255, 0.3)'
+                        },
+                        smooth: 0.2,
+                        length: 10,
+                        length2: 20
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: '#c23531',
+                        shadowBlur: 200,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                },
+
+                animationType: 'scale',
+                animationEasing: 'elasticOut',
+                animationDelay: function (idx) {
+                    return Math.random() * 200;
+                }
+            }
+        ]
+    };
+    myChart.setOption(option);
+</script>
+</body>
+</html>
